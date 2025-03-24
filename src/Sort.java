@@ -108,7 +108,7 @@ public class Sort {
         arr[b] =  swap;
     }
 
-    public static boolean is_sorted(TrafficFlow[] array) {
+    private static boolean is_sorted(TrafficFlow[] array) {
         int size = array.length;
         for (int i = 0; i < size - 1; i++) {
             if (array[i].compareTo(array[i + 1]) > 0) {

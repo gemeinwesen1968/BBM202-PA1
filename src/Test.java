@@ -5,18 +5,18 @@ import java.util.*;
 
 public class Test {
     private static final int[] sizes = {
-            500, 1000, 2000, 4000, 8000
-            //16000, 32000, 64000, 128000, 250000
+            500, 1000, 2000, 4000, 8000,
+            16000, 32000, 64000, 128000, 250000
     };
 
-    private static final TestFunctions[] functions = TestFunctions.values();
+    private static final SORT_FUNCTION[] functions = SORT_FUNCTION.values();
     private static final TrafficFlow[] g_flows = Parser.read("TrafficFlowDataset.csv", 250000);
-    private static final EnumMap<TestFunctions, List<Double>> random_test_results = new EnumMap<>(TestFunctions.class);
-    private static final EnumMap<TestFunctions, List<Double>> sorted_test_results = new EnumMap<>(TestFunctions.class);
-    private static final EnumMap<TestFunctions, List<Double>> reverse_sorted_test_results = new EnumMap<>(TestFunctions.class);
+    private static final EnumMap<SORT_FUNCTION, List<Double>> random_test_results = new EnumMap<>(SORT_FUNCTION.class);
+    private static final EnumMap<SORT_FUNCTION, List<Double>> sorted_test_results = new EnumMap<>(SORT_FUNCTION.class);
+    private static final EnumMap<SORT_FUNCTION, List<Double>> reverse_sorted_test_results = new EnumMap<>(SORT_FUNCTION.class);
 
-    private static void init_map(EnumMap<TestFunctions, List<Double>> map) {
-        for (TestFunctions func : functions) {
+    private static void init_map(EnumMap<SORT_FUNCTION, List<Double>> map) {
+        for (SORT_FUNCTION func : functions) {
             map.put(func, new ArrayList<>());
         }
     }
@@ -47,12 +47,12 @@ public class Test {
         System.out.println("\n");
     }
 
-    private static void benchmark(EnumMap<TestFunctions, List<Double>> map) {
+    private static void benchmark(EnumMap<SORT_FUNCTION, List<Double>> map) {
         for (int i : sizes) {
             System.out.println("INPUT SIZE " + i);
             TrafficFlow[] arr = new TrafficFlow[i];
             System.arraycopy(g_flows, 0, arr, 0, i);
-            for (TestFunctions func : functions) {
+            for (SORT_FUNCTION func : functions) {
                 double total = 0.0;
                 for (int j = 0; j < 10; j++) {
                     TrafficFlow[] testArray = Arrays.copyOf(arr, i);
@@ -71,11 +71,10 @@ public class Test {
         }
     }
 
-    private static void plot(EnumMap<TestFunctions, List<Double>> map, String title) {
+    private static void plot(EnumMap<SORT_FUNCTION, List<Double>> map, String title) {
         XYChart chart = new XYChartBuilder().width(800).height(600).title(title)
                 .xAxisTitle("Input Size").yAxisTitle("Average Time").build();
-        chart.getStyler().setYAxisLogarithmic(true);
-        for (TestFunctions func : functions) {
+        for (SORT_FUNCTION func : functions) {
             List<Double> times = map.get(func);
             double[] xData = Arrays.stream(sizes).asDoubleStream().toArray();
             double[] yData = times.stream().mapToDouble(Double::doubleValue).toArray();
@@ -83,7 +82,6 @@ public class Test {
             XYSeries series = chart.addSeries(func.name(), xData, yData);
             series.setMarker(SeriesMarkers.NONE);
         }
-        new SwingWrapper<>(chart).displayChart();
 
         try {
             BitmapEncoder.saveBitmap(chart, "charts/ " + title, BitmapEncoder.BitmapFormat.PNG);
